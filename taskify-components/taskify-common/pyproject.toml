@@ -1,0 +1,8 @@
+[project]
+name = "taskify-common"
+version = "0.1.0"
+description = "Common utilities shared across Taskify services"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[all]>=0.117.1",
+]
