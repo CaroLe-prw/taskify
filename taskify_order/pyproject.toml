@@ -5,8 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "taskify-common",
+    "taskify_common",
 ]
 
 [tool.uv.sources]
-taskify-common = { path = "../taskify-components/taskify-common" }
+taskify_common = { path = "../taskify_components/taskify_common" }

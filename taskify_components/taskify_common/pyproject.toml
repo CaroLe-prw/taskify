@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taskify-common"
+version = "0.1.0"
+description = "Common utilities shared across Taskify services"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[all]>=0.117.1",
+    "loguru>=0.7.3",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["taskify_components*"]
+
