@@ -1,16 +1,19 @@
 from fastapi import HTTPException, Request
+from fastapi.responses import JSONResponse
 
-from .exception import TaskifyException
-from .exception_code import Code, get_message
+from ..expection.exception import TaskifyException
+from ..expection.exception_code import Code, get_message
 from ..logger.logger import log_error
-from ..response import Result
+from ..response.result import Result
 
 
 def register_exception_handlers(app):
     """注册公共异常"""
 
     @app.exception_handler(TaskifyException)
-    async def data_exception_handler(request: Request, exc: TaskifyException):
+    async def data_exception_handler(
+        request: Request, exc: TaskifyException
+    ) -> JSONResponse:
         # 获取错误信息，如果没有自定义message则使用预定义的
         error_message = (
             exc.message if exc.message else get_message(exc.code, "未知错误")
@@ -26,7 +29,9 @@ def register_exception_handlers(app):
         return Result.fail(code=exc.code, message=error_message)
 
     @app.exception_handler(HTTPException)
-    async def http_exception_handler(request: Request, exc: HTTPException):
+    async def http_exception_handler(
+        request: Request, exc: HTTPException
+    ) -> JSONResponse:
         # 使用HTTP状态码或获取预定义消息
         error_message = (
             str(exc.detail) if exc.detail else get_message(exc.status_code, "HTTP错误")
@@ -42,7 +47,9 @@ def register_exception_handlers(app):
         return Result.fail(code=exc.status_code, message=error_message)
 
     @app.exception_handler(Exception)
-    async def global_exception_handler(request: Request, exc: Exception):
+    async def global_exception_handler(
+        request: Request, exc: Exception
+    ) -> JSONResponse:
         import traceback
 
         # 获取详细的异常堆栈信息
