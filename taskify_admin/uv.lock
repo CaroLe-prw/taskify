@@ -740,12 +740,14 @@ source = { directory = "../taskify_components/taskify_common" }
 dependencies = [
     { name = "fastapi", extra = ["all"] },
     { name = "loguru" },
+    { name = "starlette" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["all"], specifier = ">=0.117.1" },
     { name = "loguru", specifier = ">=0.7.3" },
+    { name = "starlette", specifier = ">=0.48.0" },
 ]
 
 [[package]]

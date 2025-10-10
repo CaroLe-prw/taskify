@@ -1,0 +1,13 @@
+[project]
+name = "taskify-redis"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "redis>=6.4.0",
+]
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["taskify_redis*"]
