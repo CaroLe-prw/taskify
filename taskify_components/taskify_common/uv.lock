@@ -860,13 +860,13 @@ requires-dist = [
     { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
     { name = "pyjwt", specifier = ">=2.10.1" },
     { name = "starlette", specifier = ">=0.48.0" },
-    { name = "taskify-redis", directory = "../taskify_redis" },
+    { name = "taskify-redis", editable = "../taskify_redis" },
 ]
 
 [[package]]
 name = "taskify-redis"
 version = "0.1.0"
-source = { directory = "../taskify_redis" }
+source = { editable = "../taskify_redis" }
 dependencies = [
     { name = "redis" },
 ]

@@ -1,6 +1,7 @@
+import jwt
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
-import jwt
 from taskify_redis import RedisHelper
 
 
@@ -9,8 +10,8 @@ class TokenHelper:
 
     def __init__(
         self,
-        secret_key: str,
-        algorithm: str = "HS256",
+        secret_key: str = os.getenv("JWT_SECRET_KEY"),
+        algorithm: str = os.getenv("JWT_ALGORITHM", "HS256"),
         access_token_expire_minutes: int = 30,
         refresh_token_expire_days: int = 7,
         redis_helper: Optional[RedisHelper] = None,
@@ -21,13 +22,13 @@ class TokenHelper:
         :param algorithm: 加密算法，默认 HS256
         :param access_token_expire_minutes: access token 过期时间（分钟），默认 30 分钟
         :param refresh_token_expire_days: refresh token 过期时间（天），默认 7 天
-        :param redis_helper: Redis 工具类实例，用于存储 token 黑名单等
+        :param redis_helper: Redis 工具类实例，如果不传则自动创建默认实例，传 None 可禁用 Redis 功能
         """
         self.secret_key = secret_key
         self.algorithm = algorithm
         self.access_token_expire_minutes = access_token_expire_minutes
         self.refresh_token_expire_days = refresh_token_expire_days
-        self.redis_helper = redis_helper
+        self.redis_helper = redis_helper or RedisHelper()
 
     def generate_token(
         self, user_id: str, user_data: Optional[Dict[str, Any]] = None
@@ -167,66 +168,3 @@ class TokenHelper:
         new_access_token = self.generate_token(user_id, user_data)
 
         return new_access_token
-
-    def revoke_token(self, token: str) -> bool:
-        """
-        撤销 token（加入黑名单）
-        :param token: 要撤销的 token
-        :return: 是否成功
-        """
-        if not self.redis_helper:
-            return False
-
-        try:
-            # 解析 token 获取过期时间
-            payload = jwt.decode(
-                token,
-                self.secret_key,
-                algorithms=[self.algorithm],
-                options={"verify_exp": False},  # 不验证过期时间
-            )
-            exp = payload.get("exp")
-            if not exp:
-                return False
-
-            # 计算剩余过期时间
-            now = datetime.now(timezone.utc).timestamp()
-            ttl = int(exp - now)
-            if ttl <= 0:
-                return True  # 已过期的 token 无需加入黑名单
-
-            # 将 token 加入黑名单
-            blacklist_key = f"token_blacklist:{token}"
-            self.redis_helper.set(blacklist_key, "1", ex=ttl, serialize=False)
-            return True
-        except Exception as e:
-            print(f"Error revoking token: {e}")
-            return False
-
-    def revoke_user_tokens(self, user_id: str) -> bool:
-        """
-        撤销用户的所有 refresh token
-        :param user_id: 用户 ID
-        :return: 是否成功
-        """
-        if not self.redis_helper:
-            return False
-
-        try:
-            redis_key = f"refresh_token:{user_id}"
-            return self.redis_helper.delete(redis_key)
-        except Exception as e:
-            print(f"Error revoking user tokens: {e}")
-            return False
-
-    def _is_token_blacklisted(self, token: str) -> bool:
-        """
-        检查 token 是否在黑名单中
-        :param token: token 字符串
-        :return: 是否在黑名单中
-        """
-        if not self.redis_helper:
-            return False
-
-        blacklist_key = f"token_blacklist:{token}"
-        return self.redis_helper.exists(blacklist_key)

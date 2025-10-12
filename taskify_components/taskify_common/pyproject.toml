@@ -3,7 +3,7 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "taskify-common"
+name = "taskify_common"
 version = "0.1.0"
 description = "Common utilities shared across Taskify services"
 requires-python = ">=3.11"
@@ -17,10 +17,12 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-taskify_redis = { path = "../taskify_redis" }
+taskify_redis = { workspace = true }
 
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["taskify_components*"]
+[tool.setuptools]
+packages = ["taskify_common"]
+
+[tool.setuptools.package-dir]
+taskify_common = "."
 

@@ -9,4 +9,4 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-taskify_common = { path = "../taskify_components/taskify_common" }
+taskify_common = { workspace = true }

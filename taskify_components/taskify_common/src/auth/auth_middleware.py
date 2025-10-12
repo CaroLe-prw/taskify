@@ -1,3 +1,5 @@
+from typing import Optional
+
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
@@ -10,14 +12,14 @@ from .token_helper import TokenHelper
 class AuthCORSMiddleware(BaseHTTPMiddleware):
     """token cors校验中间件"""
 
-    def __init__(self, app, token_helper: TokenHelper):
+    def __init__(self, app, token_helper: Optional[TokenHelper] = None):
         """
         初始化中间件
         :param app: ASGI 应用
-        :param token_helper: TokenHelper 实例
+        :param token_helper: TokenHelper 实例，缺省时自动实例化
         """
         super().__init__(app)
-        self.token_helper = token_helper
+        self.token_helper = token_helper or TokenHelper()
 
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint

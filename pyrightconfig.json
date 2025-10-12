@@ -1,0 +1,14 @@
+{
+    "pythonVersion": "3.11",
+    "include": [
+        "taskify_admin",
+        "taskify_mall",
+        "taskify_order",
+        "taskify_components"
+    ],
+    "extraPaths": [
+        "taskify_components",
+        "taskify_components/taskify_common/src",
+        "taskify_components/taskify_redis/src"
+    ]
+}

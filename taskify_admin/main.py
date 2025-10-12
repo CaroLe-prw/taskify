@@ -1,9 +1,4 @@
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from taskify_components.taskify_common import register_exception_handlers,AuthCORSMiddleware
+from taskify_common import register_exception_handlers, AuthCORSMiddleware
 
 import uvicorn
 from fastapi import FastAPI
